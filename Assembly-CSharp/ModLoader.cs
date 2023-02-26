@@ -236,7 +236,7 @@ namespace Modding
             // dict<mod, dict<scene, dict<objName, object>>>
             var preloadedObjects = new Dictionary<ModInstance, Dictionary<string, Dictionary<string, GameObject>>>();
             // scene -> respective hooks
-            var sceneHooks = new Dictionary<string, List<Func<IEnumerator>>>();
+            var sceneHooks = new Dictionary<string, List<Func<Scene, IEnumerator>>>();
             
             Logger.APILogger.Log("Creating mod preloads");
             
@@ -300,7 +300,7 @@ namespace Modding
             ModInstance[] orderedMods,
             List<string> scenes,
             Dictionary<string, List<(ModInstance, List<string> objectNames)>> toPreload,
-            Dictionary<string, List<Func<IEnumerator>>> sceneHooks
+            Dictionary<string, List<Func<Scene, IEnumerator>>> sceneHooks
         )
         {
             foreach (var mod in orderedMods)
@@ -327,7 +327,7 @@ namespace Modding
                     foreach (var (scene, hook) in mod.Mod.PreloadSceneHooks())
                     {
                         if (!sceneHooks.TryGetValue(scene, out var hooks))
-                            sceneHooks[scene] = hooks = new List<Func<IEnumerator>>();
+                            sceneHooks[scene] = hooks = new List<Func<Scene, IEnumerator>>();
 
                         hooks.Add(hook);
                     }

@@ -27,7 +27,7 @@ namespace Modding
         /// A list of requested scenes to be preloaded and actions to execute on loading of those scenes
         /// </summary>
         /// <returns>List of tuples containg scene names and the respective actions.</returns>
-        (string, Func<IEnumerator>)[] PreloadSceneHooks();
+        (string, Func<UnityEngine.SceneManagement.Scene, IEnumerator>)[] PreloadSceneHooks();
 
         /// <summary>
         ///     Called after preloading of all mods.

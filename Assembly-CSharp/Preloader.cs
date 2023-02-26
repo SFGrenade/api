@@ -34,7 +34,7 @@ internal class Preloader : MonoBehaviour
     (
         Dictionary<string, List<(ModLoader.ModInstance, List<string>)>> toPreload,
         Dictionary<ModLoader.ModInstance, Dictionary<string, Dictionary<string, GameObject>>> preloadedObjects,
-        Dictionary<string, List<Func<IEnumerator>>> sceneHooks
+        Dictionary<string, List<Func<Scene, IEnumerator>>> sceneHooks
     )
     {
         MuteAllAudio();
@@ -159,7 +159,7 @@ internal class Preloader : MonoBehaviour
     (
         Dictionary<string, List<(ModLoader.ModInstance Mod, List<string> Preloads)>> toPreload,
         IDictionary<ModLoader.ModInstance, Dictionary<string, Dictionary<string, GameObject>>> preloadedObjects,
-        Dictionary<string, List<Func<IEnumerator>>> sceneHooks
+        Dictionary<string, List<Func<Scene, IEnumerator>>> sceneHooks
     )
     {
         List<string> sceneNames = toPreload.Keys.Union(sceneHooks.Keys).ToList();
@@ -212,10 +212,10 @@ internal class Preloader : MonoBehaviour
             foreach (var go in rootObjects)
                 go.SetActive(false);
 
-            if (sceneHooks.TryGetValue(scene.name, out List<Func<IEnumerator>> hooks))
+            if (sceneHooks.TryGetValue(scene.name, out List<Func<Scene, IEnumerator>> hooks))
             {
                 // ToArray to force a strict select, that way we start them all simultaneously
-                foreach (IEnumerator hook in hooks.Select(x => x()).ToArray())
+                foreach (IEnumerator hook in hooks.Select(x => x(scene)).ToArray())
                     yield return hook;
             }
 
