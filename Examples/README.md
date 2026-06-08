@@ -1,11 +1,11 @@
 # Examples
-This directory contains many example mods to show the common uses of the modding api.
-These mods are intended to give beginners a look at how to start to develop mods using this api,
-although proficient knowlege of C# is fairly required.  
+This directory contains many example mods to show the common uses of the Modding API.
+These mods are intended to give beginners a look at how to start to develop mods using this API,
+although proficient knowledge of C# is fairly required.  
 
 ## Setup
 These projects can be built without any additional configuration.
-The modding api project defines a build setting to copy the files into a `HollowKnightManaged` folder
+The Modding API project defines a build setting to copy the files into a `HollowKnightManaged` folder
 to set up the references.
 See the [README](../README.md) for setup of the general modding API.
 * To build the project with an IDE, set the `SetupExamples` build property to `true`.  
