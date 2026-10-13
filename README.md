@@ -29,7 +29,7 @@ Use `win-x64` on Windows or `linux-x64` on Linux. The project builds its patchin
 
 The patcher disables method inlining in modified game assemblies so runtime hooks can observe calls reliably.
 
-On Apple Silicon, use `osx-x64` and run the game through Rosetta for compatibility testing. MonoMod 25.3.6 does not support native `osx-arm64` runtime detours. The native dependency packager can select arm64 files, and CI produces universal macOS libraries, but neither establishes native arm64 mod compatibility.
+On Apple Silicon, use `osx-x64`. The build merges the x86-64 and arm64 native libraries into universal binaries with `lipo`, which ships with the macOS command line tools, so the package works with both native and Rosetta game processes. The GitHub Actions macOS job installs [konoui/lipo](https://github.com/konoui/lipo) on its Linux runner for the same merge. Runtime hooks, including mods such as Benchwarp that use native detours, run in a native arm64 game process.
 
 Builds leave the game installation untouched unless `CopyDir` is explicitly supplied. To install the result, close the game and copy the contents of `OutputFinal` into its `Managed` folder, or build with `-p:CopyDir="/absolute/path/to/Managed"`.
 
