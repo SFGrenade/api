@@ -90,7 +90,7 @@ internal class Preloader : MonoBehaviour
         yield return CleanUpPreloading();
 
         UnmuteAllAudio();
-        Logger.APILogger.LogError($"Finished preloading in {stopwatch.ElapsedMilliseconds / 1000:F2}s");
+        Logger.APILogger.Log($"Finished preloading in {stopwatch.ElapsedMilliseconds / 1000.0:F2}s");
     }
 
     /// <summary>
@@ -477,10 +477,6 @@ internal class Preloader : MonoBehaviour
         progressBar.Progress = (1 * progressAlpha + progressBeta);
     }
 
-    /// <summary>
-    ///     Clean up everything from preloading.
-    /// </summary>
-    /// <returns></returns>
     private IEnumerator CleanUpPreloading()
     {
         // Reload the main menu to fix the music/shaders
@@ -488,12 +484,10 @@ internal class Preloader : MonoBehaviour
 
         ModLoader.LoadState |= ModLoader.ModLoadState.Preloaded;
 
-        // adapted main menu loading from StartManager
-        AsyncOperation loadOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Quit_To_Menu");
-        loadOperation.allowSceneActivation = false;
+        // Quit_To_Menu is a transition scene and must not start a gameplay level.
+        ((Patches.GameManager)GameManager.instance).PrepareForMenuTransition();
         Platform.Current.SetSceneLoadState(true, true);
-        loadOperation.allowSceneActivation = true;
-        yield return loadOperation;
+        yield return USceneManager.LoadSceneAsync("Quit_To_Menu");
         while (USceneManager.GetActiveScene().name != Constants.MENU_SCENE)
         {
             yield return new WaitForEndOfFrame();
@@ -501,7 +495,6 @@ internal class Preloader : MonoBehaviour
 
         Destroy(progressBar);
         yield return null;
-        yield break;
     }
 
     /// <summary>

@@ -2240,8 +2240,7 @@ namespace MonoMod
                 if (PreventInline && method.HasBody)
                 {
                     method.NoInlining = true;
-                    // Remove AggressiveInlining
-                    method.ImplAttributes &= (MethodImplAttributes)0x0100;
+                    method.ImplAttributes &= ~MethodImplAttributes.AggressiveInlining;
                 }
 
                 method.FixShortLongOps();

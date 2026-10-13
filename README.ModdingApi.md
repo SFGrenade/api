@@ -1,22 +1,26 @@
-Hollow Knight Modding API
-=========================
+# Hollow Knight Modding API
 
-This is a simple modding API used mainly for compatibility between mods. It does little on its own, but is required for several mods to run.
+This development build targets Hollow Knight 1.5.12620 (Unity 6). Use a build that matches both the game version and the game process architecture. Compatibility with every existing mod has not been established.
 
-How To Install
-==============
+## Installation
 
-Navigate to your Hollow Knight Game Install folder.
+Close the game and copy this package's files into its `Managed` directory:
 
-    Steam: C:\Program Files (x86)\Steam\steamapps\common\Hollow Knight\
-    GoG:
+- macOS: `hollow_knight.app/Contents/Resources/Data/Managed`
+- Windows and Linux: `hollow_knight_Data/Managed`
 
-Copy everything in this zip file into the game's folder.  When prompted to overwrite files, say yes.
+Place each mod in its own subdirectory of `Managed/Mods`. The title screen lists loaded mods and any initialization failures.
 
-You may also use [Scarab](https://github.com/fifty-six/Scarab/releases/latest).
+## Apple Silicon
 
-How To Uninstall
-================
+MonoMod 25.3.6 requires an x86-64 game process on macOS. Use the `osx-x64` package and Rosetta. For example, replace the application path below with the location of your installation:
 
-Steam: Right Click on Hollow Knight -> Properties -> Local Files -> Verify Integrity of Game Files
-GoG: Options -> Manage Installation -> Verify / Repair
+```sh
+arch -x86_64 "/path/to/hollow_knight.app/Contents/MacOS/Hollow Knight"
+```
+
+Launching the universal game normally on Apple Silicon selects arm64, which this version of MonoMod does not support. A universal native dependency alone does not provide arm64 runtime hook support.
+
+## Removal
+
+Restore the original game files using Steam's **Properties → Installed Files → Verify integrity of game files**, or the equivalent repair command in your game client. This removes the API from the game assemblies; manually added mod files may remain in `Managed/Mods`.

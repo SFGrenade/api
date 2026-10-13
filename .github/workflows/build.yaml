@@ -67,26 +67,18 @@ jobs:
         run: |
           sudo apt-get update -y
           sudo apt-get install -y mono-devel
-      - name: Restore Dependencies
-        run: |
-          dotnet restore
-      - name: Build PrePatcher & PostPatcher
-        run: |
-          dotnet build PrePatcher -o PrePatcher/Output -p:Configuration=Release
-          dotnet build PostPatcher -o PostPatcher/Output -p:Configuration=Release
-      - name: Build TC assembly patches
-        run: |
-          dotnet build TeamCherry.Localization --runtime $RID -p:Configuration=Release
       - name: Build Assembly-CSharp
         run: |
-          dotnet build Assembly-CSharp --runtime $RID -p:Configuration=Release
+          dotnet build Assembly-CSharp --runtime "$RID" --configuration Release
       - name: Merge osx dylibs
         if: matrix.platform == 'macos'
         run: |
           wget https://github.com/konoui/lipo/releases/download/v0.9.4/lipo_linux_amd64 -O lipo
           chmod +x lipo
-          ./lipo -output libunityscenerepacker.dylib -create ./Assembly-CSharp/packages/unityscenerepacker/2.4.0/runtimes/osx-*/native/libunityscenerepacker.dylib
-          mv libunityscenerepacker.dylib OutputFinal/
+          for native_library in ./Assembly-CSharp/packages/unityscenerepacker/2.4.0/runtimes/osx-x64/native/*.dylib; do
+            library_name=$(basename "$native_library")
+            ./lipo -output "OutputFinal/$library_name" -create "$native_library" "./Assembly-CSharp/packages/unityscenerepacker/2.4.0/runtimes/osx-arm64/native/$library_name"
+          done
       - name: Upload Binary
         if: inputs.upload-artifact
         uses: actions/upload-artifact@v7
