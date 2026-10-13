@@ -10,6 +10,7 @@ using USystemLanguage = UnityEngine.SystemLanguage;
 namespace Language;
 
 [Obsolete("Use `TeamCherry.Localization.Language` instead.")]
+[Modding.ForwardedHooks]
 public static class Language
 {
     public static void LoadLanguage() => COMPAT_LoadLanguage();

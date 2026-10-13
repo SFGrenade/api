@@ -38,6 +38,11 @@ namespace Modding.Patches
     [MonoModPatch("global::GameManager")]
     public class GameManager : global::GameManager
     {
+        [MonoModIgnore]
+        private bool waitForManualLevelStart;
+
+        internal void PrepareForMenuTransition() => waitForManualLevelStart = true;
+
         internal static string ModdedSavePath(int slot) =>
             Path.Combine
             (

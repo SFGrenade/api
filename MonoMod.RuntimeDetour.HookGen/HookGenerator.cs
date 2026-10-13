@@ -287,7 +287,7 @@ namespace MonoMod.RuntimeDetour.HookGen
             ILProcessor il;
             GenericInstanceMethod endpointMethod;
 
-            var methodRef = OutputModule.ImportReference(method);
+            var methodRef = OutputModule.ImportReference(GetHookTarget(method));
 
             #region Hook
 
@@ -380,6 +380,48 @@ namespace MonoMod.RuntimeDetour.HookGen
             #endregion
 
             return true;
+        }
+
+        private static MethodReference GetHookTarget(MethodDefinition method)
+        {
+            if (!method.DeclaringType.CustomAttributes.Any(attribute =>
+                attribute.AttributeType.FullName == "Modding.ForwardedHooksAttribute"))
+                return method;
+
+            if (!method.IsStatic || !method.HasBody || method.Body.HasExceptionHandlers)
+                throw new InvalidOperationException($"Forwarded hook method '{method.FullName}' must have a static forwarding body.");
+
+            var instructions = method.Body.Instructions.Where(instruction => instruction.OpCode != OpCodes.Nop).ToArray();
+            int argumentCount = method.Parameters.Count;
+            if (instructions.Length != argumentCount + 2 ||
+                instructions[argumentCount].OpCode != OpCodes.Call ||
+                instructions[argumentCount].Operand is not MethodReference target ||
+                target.HasThis || target.HasGenericParameters || target is GenericInstanceMethod ||
+                target.DeclaringType.FullName == method.DeclaringType.FullName ||
+                target.Parameters.Count != argumentCount ||
+                instructions[argumentCount + 1].OpCode != OpCodes.Ret)
+                throw new InvalidOperationException($"Forwarded hook method '{method.FullName}' must directly call one external static method and return its result.");
+
+            for (int index = 0; index < argumentCount; index++)
+            {
+                if (!LoadsArgument(instructions[index], index))
+                    throw new InvalidOperationException($"Forwarded hook method '{method.FullName}' must pass its arguments unchanged and in order.");
+            }
+
+            return target;
+        }
+
+        private static bool LoadsArgument(Instruction instruction, int index)
+        {
+            return instruction.OpCode.Code switch
+            {
+                Code.Ldarg_0 => index == 0,
+                Code.Ldarg_1 => index == 1,
+                Code.Ldarg_2 => index == 2,
+                Code.Ldarg_3 => index == 3,
+                Code.Ldarg or Code.Ldarg_S => instruction.Operand is ParameterDefinition parameter && parameter.Index == index,
+                _ => false
+            };
         }
 
         public TypeDefinition GenerateDelegateFor(MethodDefinition method)

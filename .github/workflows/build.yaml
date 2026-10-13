@@ -67,26 +67,16 @@ jobs:
         run: |
           sudo apt-get update -y
           sudo apt-get install -y mono-devel
-      - name: Restore Dependencies
-        run: |
-          dotnet restore
-      - name: Build PrePatcher & PostPatcher
-        run: |
-          dotnet build PrePatcher -o PrePatcher/Output -p:Configuration=Release
-          dotnet build PostPatcher -o PostPatcher/Output -p:Configuration=Release
-      - name: Build TC assembly patches
-        run: |
-          dotnet build TeamCherry.Localization --runtime $RID -p:Configuration=Release
-      - name: Build Assembly-CSharp
-        run: |
-          dotnet build Assembly-CSharp --runtime $RID -p:Configuration=Release
-      - name: Merge osx dylibs
+      - name: Install lipo
         if: matrix.platform == 'macos'
         run: |
-          wget https://github.com/konoui/lipo/releases/download/v0.9.4/lipo_linux_amd64 -O lipo
-          chmod +x lipo
-          ./lipo -output libunityscenerepacker.dylib -create ./Assembly-CSharp/packages/unityscenerepacker/2.4.0/runtimes/osx-*/native/libunityscenerepacker.dylib
-          mv libunityscenerepacker.dylib OutputFinal/
+          mkdir -p "$HOME/.local/bin"
+          wget https://github.com/konoui/lipo/releases/download/v0.9.4/lipo_linux_amd64 -O "$HOME/.local/bin/lipo"
+          chmod +x "$HOME/.local/bin/lipo"
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - name: Build Assembly-CSharp
+        run: |
+          dotnet build Assembly-CSharp --runtime "$RID" --configuration Release
       - name: Upload Binary
         if: inputs.upload-artifact
         uses: actions/upload-artifact@v7
