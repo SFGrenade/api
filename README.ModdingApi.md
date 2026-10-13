@@ -13,13 +13,13 @@ Place each mod in its own subdirectory of `Managed/Mods`. The title screen lists
 
 ## Apple Silicon
 
-MonoMod 25.3.6 requires an x86-64 game process on macOS. Use the `osx-x64` package and Rosetta. For example, replace the application path below with the location of your installation:
+Steam builds refuse to start when Steam initialization fails, and MonoMod 25.3.6 requires an x86-64 game process on macOS. Use the `osx-x64` package and launch through Rosetta with the app id environment variables set, keeping the Steam client running. Replace the application path below with the location of your installation:
 
 ```sh
-arch -x86_64 "/path/to/hollow_knight.app/Contents/MacOS/Hollow Knight"
+SteamAppId=367520 SteamGameId=367520 arch -x86_64 "/path/to/hollow_knight.app/Contents/MacOS/Hollow Knight"
 ```
 
-Launching the universal game normally on Apple Silicon selects arm64, which this version of MonoMod does not support. A universal native dependency alone does not provide arm64 runtime hook support.
+Launching the universal game normally, whether directly or through Steam, selects arm64, which this version of MonoMod does not support. A universal native dependency alone does not provide arm64 runtime hook support.
 
 ## Removal
 
