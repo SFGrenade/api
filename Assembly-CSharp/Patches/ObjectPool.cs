@@ -31,12 +31,12 @@ namespace Modding.Patches
             }
         }
 
-        public static extern void orig_CreatePool(GameObject prefab, int initialPoolSize);
-        public static void CreatePool(GameObject prefab, int initialPoolSize)
+        public static extern void orig_CreatePool(GameObject prefab, int initialPoolSize, bool runInitialisation = false);
+        public static void CreatePool(GameObject prefab, int initialPoolSize, bool runInitialisation = false)
         {
             try
             {
-                orig_CreatePool(prefab, initialPoolSize);
+                orig_CreatePool(prefab, initialPoolSize, runInitialisation);
             }
             catch (NullReferenceException) when (!ModLoader.LoadState.HasFlag(ModLoader.ModLoadState.Preloaded))
             { }
