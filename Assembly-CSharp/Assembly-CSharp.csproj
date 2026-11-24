@@ -144,13 +144,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="MonoMod.Patcher" Version="25.0.1">
-            <IncludeAssets>all</IncludeAssets>
-        </PackageReference>
         <PackageReference Include="MonoMod.RuntimeDetour" Version="25.3.6">
-            <IncludeAssets>all</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="MonoMod.Utils" Version="25.0.14">
             <IncludeAssets>all</IncludeAssets>
         </PackageReference>
 
@@ -167,6 +161,8 @@
         <ProjectReference Include="../PostPatcher/PostPatcher.csproj">
             <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
         </ProjectReference>
+        <ProjectReference Include="..\MonoMod.Patcher\MonoMod.Patcher.csproj" />
+        <ProjectReference Include="..\MonoMod.RuntimeDetour.HookGen\MonoMod.RuntimeDetour.HookGen.csproj" />
     </ItemGroup>
 
     <ItemGroup>
