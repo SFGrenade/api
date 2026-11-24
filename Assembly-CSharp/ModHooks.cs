@@ -225,7 +225,7 @@ namespace Modding
         /// <remarks>N/A</remarks>
         internal static string LanguageGet(string key, string sheet)
         {
-            string res = Language.Language.GetInternal(key, sheet);
+            string res = Language.GetInternal(key, sheet);
 
             if (LanguageGetHook == null)
                 return res;
